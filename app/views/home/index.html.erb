@@ -3,7 +3,7 @@
 <div class="container position-relative testimonial-group text-center bg-secondary-subtle border border-2 rounded" style="height: 350px">
     <div class="row h-100">
         <% @lists.each do |list| %>
-            <a href="#" class="col-3 h-100 align-top no-decoration">
+            <a href="<%= list_url(list) %>" class="col-3 h-100 align-top no-decoration">
                 <h3><%= list.title %></h3>
                 <ul class="list-group list-group-flush h-75 bg-warning-subtle border border-warning bg-light overflow-y-hidden">
                     <% list.items.each do |item| %>
@@ -23,8 +23,8 @@
     <div class="row align-items-center h-100">
         <div class="col fs-4"><%= "#{@items.select{|item| item.marked}.count}/#{@items.count} tarefas concluídas!" %></div>
         <div class="col d-flex flex-row justify-content-end">
-            <%= button_to("Limpar tarefas", "", :class => "btn btn-secondary btn-lg me-3") %>
-            <%= button_to("Apagas listas vazias", "", :class => "btn btn-dark btn-lg ms-3") %>
+            <%= button_to("Limpar tarefas", clear_items_home_index_path, :class => "btn btn-secondary btn-lg me-3", :method => "delete", data: { confirm: 'Apagar todos os itens concluídos?' }) %>
+            <%= button_to("Apagas listas vazias", clear_lists_home_index_path, :class => "btn btn-dark btn-lg ms-3", :method => "delete", data: { confirm: 'Apagar todas as listas sem itens?' }) %>
         </div>
     </div>
 </div>
