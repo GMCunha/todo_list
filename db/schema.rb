@@ -14,7 +14,7 @@ ActiveRecord::Schema.define(version: 2023_03_08_194505) do
 
   create_table "items", force: :cascade do |t|
     t.string "description"
-    t.integer "marked"
+    t.boolean "marked", default: false
     t.integer "list_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

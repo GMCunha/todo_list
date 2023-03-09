@@ -1,16 +1,21 @@
 <h1 class="d-block text-center">Suas listas:</h1>
         
-<div class="container testimonial-group text-center" style="height: 300px">
+<div class="container position-relative testimonial-group text-center bg-secondary-subtle border border-2 rounded" style="height: 300px">
     <div class="row h-100">
         <% @lists.each do |list| %>
             <div class="col-3 h-100 align-top">
                 <h3><%= list.title %></h3>
-                <ul class="list-group list-group-flush h-75 border border-warning">
+                <ul class="list-group list-group-flush h-75 bg-warning-subtle border border-warning bg-light overflow-y-hidden">
                     <% list.items.each do |item| %>
-                        <li class="list-group-item"><%= item.description %></li>
+                        <li class="list-group-item bg-warning-subtle">
+                            <%= check_box_tag("item-#{item.id}", value=true, checked=item.marked, :class => "form-check-input me-1", disabled: true) %>
+                            <span class="<%= item.marked ? "text-decoration-line-through" : "" %>"><%= item.description %></span>
+                        </li>
                     <% end %>
                 </ul>
             </div> 
         <% end %>
     </div>
+    <!--<button class="position-absolute bottom-0 end-0 translate-middle-y rounded">Nova lista</button>-->
+    <%= button_to("Nova lista", new_list_path, :class => "position-absolute bottom-0 end-0 translate-middle-y rounded", :method => "get") %>
 </div>
