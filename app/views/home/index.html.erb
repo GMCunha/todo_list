@@ -3,17 +3,17 @@
 <div class="container position-relative testimonial-group text-center bg-secondary-subtle border border-2 rounded" style="height: 350px">
     <div class="row h-100">
         <% @lists.each do |list| %>
-            <div class="col-3 h-100 align-top">
+            <a href="#" class="col-3 h-100 align-top no-decoration">
                 <h3><%= list.title %></h3>
                 <ul class="list-group list-group-flush h-75 bg-warning-subtle border border-warning bg-light overflow-y-hidden">
                     <% list.items.each do |item| %>
                         <li class="list-group-item bg-warning-subtle">
-                            <%= check_box_tag("item-#{item.id}", value=true, checked=item.marked, :class => "form-check-input me-1", disabled: true) %>
-                            <span class="<%= item.marked ? "text-decoration-line-through" : "" %>"><%= item.description %></span>
+                                <%= check_box_tag("item-#{item.id}", value=true, checked=item.marked, :class => "form-check-input me-1", disabled: true) %>
+                                <span class="<%= item.marked ? "text-decoration-line-through" : "" %>"><%= item.description %></span>
                         </li>
                     <% end %>
                 </ul>
-            </div> 
+            </a> 
         <% end %>
     </div>
     <%= button_to("Nova lista", new_list_path, :class => "position-absolute bottom-0 end-0 translate-middle-y btn btn-primary btn-sm", :method => "get") %>
