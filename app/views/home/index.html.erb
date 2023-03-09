@@ -1,0 +1,16 @@
+<h1 class="d-block text-center">Suas listas:</h1>
+        
+<div class="container testimonial-group text-center" style="height: 300px">
+    <div class="row h-100">
+        <% @lists.each do |list| %>
+            <div class="col-3 h-100 align-top">
+                <h3><%= list.title %></h3>
+                <ul class="list-group list-group-flush h-75 border border-warning">
+                    <% list.items.each do |item| %>
+                        <li class="list-group-item"><%= item.description %></li>
+                    <% end %>
+                </ul>
+            </div> 
+        <% end %>
+    </div>
+</div>
