@@ -10,13 +10,52 @@
       </ul>
     </div>
   <% end %>
-
-  <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
+  <div class="d-flex justify-content-center min-vh-100">
+    
+    <div class="row">
+      <div class="col">
+        <div class="field">
+          <h3 class="mt-4 me-4 ms-3"><%= form.text_field :title, placeholder: "Nome da sua lista", :class => "form-control-plaintext", :required => true %></h3>
+        </div>
+        
+        <div class="items bg-warning-subtle border border-warning" style="width: 45vw">
+          <ul class="list-group p-3">
+            <li id="add-item" class="list-group-item bg-warning-subtle">
+              <%= button_tag "Adicionar item", :class => "btn btn-outline-primary btn-sm" %>
+            </li>
+          </ul>
+        </div>
+      
+        <div class="actions d-flex position-sticky top-100 justify-content-between my-3">
+          <%= link_to "Cancelar", root_url, :method => "get", :class => "btn btn-secondary text-white" %>
+          <%= form.submit "Confirmar", :class => "btn btn-primary" %>
+        </div>
+      </div>
+    </div>
   </div>
 <% end %>
+
+<script>
+  $(document).ready(function() {
+    index = 0;
+    $(document).on("click", "#add-item button", function(e) {
+      e.preventDefault();
+      $(this).parent().before(`<li class='list-group-item d-flex align-items-center bg-warning-subtle'>
+                              <input name='checks[]' type='checkbox' id='checkbox-item-${++index}' class='form-check-input border-dark m-1'></checkbox>
+                              <label class='form-check-label flex-grow-1' for='checkbox-item-${index}'>
+                                <input name='descriptions[]' type-'text' id='description-item-${++index}' class='form-control-plaintext' required='required'>
+                              </label>
+                              <button type='button' class='remove-item btn btn-close'>
+                            </li>`);
+    });
+    
+    $(document).on("click", ".remove-item", function(e) {
+      e.preventDefault();
+      $(this).parent().remove();
+    });
+    
+    $(document).on("click", ".form-check-input", function() {
+      $(`label[for='${this.id}']`).toggleClass("text-decoration-line-through", this.checked);
+    });
+  })
+</script>
