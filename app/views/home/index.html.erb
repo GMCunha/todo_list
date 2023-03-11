@@ -7,8 +7,8 @@
                 <h3><%= list.title %></h3>
                 <ul class="list-group list-group-flush h-75 bg-warning-subtle border border-warning bg-light overflow-y-hidden">
                     <% list.items.each do |item| %>
-                        <li class="list-group-item bg-warning-subtle">
-                                <%= check_box_tag("item-#{item.id}", value=true, checked=item.marked, :class => "form-check-input me-1", disabled: true) %>
+                        <li class="list-group-item bg-warning-subtle d-flex">
+                                <%= check_box_tag("item-#{item.id}", value=true, checked=item.marked, :class => "form-check-input me-1 border-dark flex-shrink-0", disabled: true) %>
                                 <span class="<%= item.marked ? "text-decoration-line-through" : "" %>"><%= item.description %></span>
                         </li>
                     <% end %>
