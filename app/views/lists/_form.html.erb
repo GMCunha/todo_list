@@ -1,4 +1,4 @@
-<%= form_with(model: list, local: true) do |form| %>
+<%= form_with(model: list, local: true, :id => "list-form") do |form| %>
   <% if list.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(list.errors.count, "error") %> prohibited this list from being saved:</h2>
@@ -15,7 +15,7 @@
     <div class="row">
       <div class="col">
         <div class="field">
-          <h3 class="mt-4 me-4 ms-3"><%= form.text_field :title, placeholder: "Nome da sua lista", :class => "form-control-plaintext", :required => true %></h3>
+          <h3 class="mt-4 me-4 ms-3"><%= form.text_field :title, placeholder: "Nome da sua lista", :id => "list-name", :class => "form-control-plaintext", :required => true %></h3>
         </div>
         
         <div class="items bg-warning-subtle border border-warning" style="width: 45vw">
@@ -33,29 +33,48 @@
       </div>
     </div>
   </div>
+  
+  <script>
+    $(document).ready(function() {
+      $(document).on("click", "#add-item button", function(e) {
+        e.preventDefault();
+        $(this).parent().before(`<li class='new-item list-group-item d-flex align-items-center bg-warning-subtle'>
+                                <input type='checkbox' class='form-check-input border-dark m-1' >
+                                <input type='text' class='form-control-plaintext flex-grow-1' required='required' >
+                                <button type='button' class='remove-item btn btn-close'>
+                              </li>`);
+      });
+      
+      $(document).on("click", ".remove-item", function(e) {
+        e.preventDefault();
+        $(this).parent().remove();
+      });
+      
+      $(document).on("click", ".form-check-input", function() {
+        $(this).parent().toggleClass("text-decoration-line-through", this.checked);
+      });
+      
+      $("#list-form").submit(async function(e) {
+        e.preventDefault();
+        
+        var name = $("#list-name").val();
+        var i = 0;
+        let items = new Array();
+        $(".new-item").toArray().forEach(function(item){
+          items[i] = new Object();
+          items[i].marked = $(item).children(".form-check-input").is(":checked");
+          items[i].desc = $(item).children(".form-control-plaintext").val();
+          i++;
+        });
+        
+        await $.ajax("<%= lists_url %>", {
+          data: {
+            name: name,
+            data: items
+          },
+          type: 'POST'
+        });
+      });
+    });
+  </script>
 <% end %>
-
-<script>
-  $(document).ready(function() {
-    index = 0;
-    $(document).on("click", "#add-item button", function(e) {
-      e.preventDefault();
-      $(this).parent().before(`<li class='list-group-item d-flex align-items-center bg-warning-subtle'>
-                              <input name='checks[]' type='checkbox' id='checkbox-item-${++index}' class='form-check-input border-dark m-1'></checkbox>
-                              <label class='form-check-label flex-grow-1' for='checkbox-item-${index}'>
-                                <input name='descriptions[]' type-'text' id='description-item-${++index}' class='form-control-plaintext' required='required'>
-                              </label>
-                              <button type='button' class='remove-item btn btn-close'>
-                            </li>`);
-    });
-    
-    $(document).on("click", ".remove-item", function(e) {
-      e.preventDefault();
-      $(this).parent().remove();
-    });
-    
-    $(document).on("click", ".form-check-input", function() {
-      $(`label[for='${this.id}']`).toggleClass("text-decoration-line-through", this.checked);
-    });
-  })
-</script>
