@@ -1,5 +1,6 @@
 class ListsController < ApplicationController
   before_action :set_list, only: %i[ show edit update destroy ]
+  skip_before_action :verify_authenticity_token
 
   # GET /lists or /lists.json
   def index
@@ -21,8 +22,12 @@ class ListsController < ApplicationController
 
   # POST /lists or /lists.json
   def create
-    @list = List.new(list_params)
-
+    
+    @list = List.new(:title => list_params[:name])
+    list_params[:data].each do |k, v|
+      @list.items.build(:marked => v[:marked], :description => v[:desc])
+    end
+    
     respond_to do |format|
       if @list.save
         format.html { redirect_to root_url, notice: "Lista criada com sucesso!" }
@@ -65,6 +70,6 @@ class ListsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def list_params
-      params.require(:list).permit(:title)
+      params
     end
 end
