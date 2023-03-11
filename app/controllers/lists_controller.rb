@@ -14,10 +14,14 @@ class ListsController < ApplicationController
   # GET /lists/new
   def new
     @list = List.new
+    @type = 'POST'
+    @url = lists_url
   end
 
   # GET /lists/1/edit
   def edit
+    @type = 'PUT'
+    @url = list_path(@list.id)
   end
 
   # POST /lists or /lists.json
@@ -41,9 +45,18 @@ class ListsController < ApplicationController
 
   # PATCH/PUT /lists/1 or /lists/1.json
   def update
+    
+    list_params[:data].each do |k, v|
+      if v.key?(:id)
+        @list.items.find(v[:id]).update(:marked => v[:marked], :description => v[:desc])
+      else
+        @list.items.build(:marked => v[:marked], :description => v[:desc])
+      end
+    end
+    
     respond_to do |format|
-      if @list.update(list_params)
-        format.html { redirect_to list_url(@list), notice: "List was successfully updated." }
+      if @list.update(:title => list_params[:name])
+        format.html { redirect_to root_url, notice: "List was successfully updated." }
         format.json { render :show, status: :ok, location: @list }
       else
         format.html { render :edit, status: :unprocessable_entity }

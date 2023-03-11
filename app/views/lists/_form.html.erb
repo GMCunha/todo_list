@@ -1,4 +1,4 @@
-<%= form_with(model: list, local: true, :id => "list-form") do |form| %>
+<%= form_with(model: list, local: true, :id => "list-form", :data => {path: @url, method: @type}) do |form| %>
   <% if list.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(list.errors.count, "error") %> prohibited this list from being saved:</h2>
@@ -20,15 +20,22 @@
         
         <div class="items bg-warning-subtle border border-warning" style="width: 45vw">
           <ul class="list-group p-3">
+            <% @list.items.each do |item| %>
+              <li class='new-item list-group-item d-flex align-items-center bg-warning-subtle' data-item-id="<%= item.id %>">
+                <input type='checkbox' class='form-check-input border-dark m-1' <%= item.marked ? "checked='checked'" : "" %>>
+                <input type='text' value='<%= item.description %>' class='form-control-plaintext <%= item.marked ? "text-decoration-line-through" : "" %> flex-grow-1' required='required' >
+                <button type='button' class='remove-item btn btn-close'>
+              </li>
+            <% end %>
             <li id="add-item" class="list-group-item bg-warning-subtle">
-              <%= button_tag "Adicionar item", :class => "btn btn-outline-primary btn-sm" %>
+              <%= button_tag "Adicionar item", type: "button", :class => "btn btn-outline-primary btn-sm" %>
             </li>
           </ul>
         </div>
       
         <div class="actions d-flex position-sticky top-100 justify-content-between my-3">
           <%= link_to "Cancelar", root_url, :method => "get", :class => "btn btn-secondary text-white" %>
-          <%= form.submit "Confirmar", :class => "btn btn-primary" %>
+          <%= form.submit "Confirmar", :id => "send-form", :class => "btn btn-primary" %>
         </div>
       </div>
     </div>
@@ -36,7 +43,7 @@
   
   <script>
     $(document).ready(function() {
-      $(document).on("click", "#add-item button", function(e) {
+      $(document).off("click").on("click", "#add-item button", function(e) {
         e.preventDefault();
         $(this).parent().before(`<li class='new-item list-group-item d-flex align-items-center bg-warning-subtle'>
                                 <input type='checkbox' class='form-check-input border-dark m-1' >
@@ -51,11 +58,14 @@
       });
       
       $(document).on("click", ".form-check-input", function() {
-        $(this).parent().toggleClass("text-decoration-line-through", this.checked);
+        $(this).parent().toggleClass("text-decoration-line-through", $(this).is(":checked"));
       });
       
       $("#list-form").submit(async function(e) {
         e.preventDefault();
+        
+        const method = $(this).data("method");
+        const path = $(this).data("path");
         
         var name = $("#list-name").val();
         var i = 0;
@@ -64,15 +74,16 @@
           items[i] = new Object();
           items[i].marked = $(item).children(".form-check-input").is(":checked");
           items[i].desc = $(item).children(".form-control-plaintext").val();
+          items[i].id = $(item).data("item-id");
           i++;
         });
         
-        await $.ajax("<%= lists_url %>", {
+        await $.ajax(path, {
           data: {
             name: name,
             data: items
           },
-          type: 'POST'
+          type: method
         });
       });
     });
